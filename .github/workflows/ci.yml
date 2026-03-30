@@ -1,0 +1,55 @@
+# @format
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres" --health-interval=10s --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@localhost:5432/test_db
+      SECRET_KEY: testsecret
+      ALGORITHM: HS256
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432; do sleep 1; done
+
+      - name: Run migrations
+        run: |
+          alembic upgrade head
+
+      - name: Run tests
+        run: |
+          pytest -v

@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual env
+venv/
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# Alembic
+app/db/migrations/versions/*.pyc
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Docker
+*.pid
+
+# Node (if mixed repo)
+node_modules/
+
+# Secrets
+secrets.json
+
+# Build
+dist/
+build/
+
+# Misc
+*.swp
+*.bak
